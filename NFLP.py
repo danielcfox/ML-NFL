@@ -6,16 +6,7 @@ reated on Fri Oct 27 06:09:51 2017
 @author: dfox
 """
 
-import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from sklearn.neural_network import MLPClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import RidgeCV
-import math
-import copy
 import os
 import datetime as dt
 
@@ -56,41 +47,6 @@ team_list = [
       'WAS'
     ]
 
-tdhr = {
-      'ARI': -0.192401,
-      'ATL': 0.035722,
-      'BAL': 0.265690,
-      'BUF': -0.313357,
-      'CAR': 0.000447,
-      'DAL': 0.108233,
-      'CHI': -0.072653,
-      'CIN': -0.080662,
-      'CLE': -1.069229,
-      'DEN': 0.581034,
-      'DET': -0.638797,
-      'GBP': 0.676169,
-      'HOU': -0.684752,
-      'IND': 0.642366,
-      'JAC': -0.524207,
-      'KCC': -0.016966,
-      'LAR': -0.509101,
-      'MIA': -0.147602,
-      'MIN': 0.036765,
-      'NEP': 1.088545,
-      'NOS': 0.115790,
-      'NYG': 0.055463,
-      'NYJ': -0.065944,
-      'OAK': -0.648259,
-      'PHI': 0.278435,
-      'PIT': 0.625936,
-      'SDC': 0.072101,
-      'SEA': 0.280138,
-      'SFF': 0.062144,
-      'TBB': -0.387991,
-      'TEN': -0.174533,
-      'WAS': -0.409294
-      }
-
 class NFLP:
     nfl_games_fn = os.path.join(location, 'NFLGamesDB.csv')
     team_names_map_fn = os.path.join(location, 'TeamNamesMap.csv')
@@ -99,7 +55,7 @@ class NFLP:
 
     def __init__(self):
         starttime = dt.datetime.now()
-        print("start")
+#        print("start")
         
         self.td = {}
         self.rstd = {}
@@ -117,7 +73,7 @@ class NFLP:
 
         count = 0
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
         gdf['VPF'] = gdf['Q1VS'] + gdf['Q2VS'] + gdf['Q3VS'] + gdf['Q4VS'] + gdf['OTVS']
         gdf['VRPF'] = gdf['VPF'] - gdf['OTVS']
         gdf['VPA'] = gdf['Q1HS'] + gdf['Q2HS'] + gdf['Q3HS'] + gdf['Q4HS'] + gdf['OTHS']
@@ -133,36 +89,6 @@ class NFLP:
         gdf['VQ4NP'] = gdf['Q4VS'] - gdf['Q4HS']
         gdf['VOTNP'] = gdf['OTVS'] - gdf['OTHS']
 
-        """
-        gsdf = gdf[gdf['Year'] > 1977].copy()
-        for index, row in gsdf.iterrows():
-            gsdf.at[index, 'RegOddsDiff'] = abs(gsdf.at[index, 'VRNP'] + gsdf.at[index, 'VSpread'])
-            gsdf.at[index, 'OddsDiff'] = abs(gsdf.at[index, 'VNP'] + gsdf.at[index, 'VSpread'])
-            gsdf.at[index, 'VRegOddsDiff'] = gsdf.at[index, 'VRNP'] + gsdf.at[index, 'VSpread']
-            gsdf.at[index, 'VOddsDiff'] = gsdf.at[index, 'VNP'] + gsdf.at[index, 'VSpread']
-            gsdf.at[index, 'FRegOddsDiff'] = gsdf.at[index, 'VRNP'] + gsdf.at[index, 'VSpread']
-            gsdf.at[index, 'FOddsDiff'] = gsdf.at[index, 'VNP'] + gsdf.at[index, 'VSpread']
-            if (gsdf.at[index, 'VOddsDiff'] > 0):
-                gsdf.at[index, 'VBeatSpread'] = 1.0
-            elif (gsdf.at[index, 'VOddsDiff'] < 0):
-                gsdf.at[index, 'VBeatSpread'] = 0.0
-            else:
-                gsdf.at[index, 'VBeatSpread'] = 0.5
-            if (gsdf.at[index, 'VSpread'] > 0):
-                if (gsdf.at[index, 'VOddsDiff'] < 0):
-                    gsdf.at[index, 'FBeatSpread'] = 1.0
-                elif (gsdf.at[index, 'VOddsDiff'] > 0):
-                    gsdf.at[index, 'FBeatSpread'] = 0.0
-                else:
-                    gsdf.at[index, 'FBeatSpread'] = 0.5
-                if (gsdf.at[index, 'VOddsDiff'] > 0):
-                    gsdf.at[index, 'FBeatSpread'] = 0.0
-                elif (gsdf.at[index, 'VOddsDiff'] < 0):
-                    gsdf.at[index, 'FBeatSpread'] = 1.0
-                else:
-                    gsdf.at[index, 'FBeatSpread'] = 0.5
-        """
-        
         for index, row in gdf.iterrows():
             v = tdf[tdf['Name'] == row.Visitor]
             v = v[row['Year'] >= v['Start']]
@@ -184,7 +110,7 @@ class NFLP:
         #        gdf.set_value(index, 'LNVRNP', -gdf.get_value(index, 'LNVRNP'))
         
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
         gdf['Visitor'] = gdf['Visitor Symbol']
         gdf['Home'] = gdf['Home Symbol']
         gdf.drop(['Visitor Symbol', 'Home Symbol'], axis=1, inplace=True)
@@ -230,7 +156,7 @@ class NFLP:
         #        gdf.set_value(index, 'LNVRNP', -gdf.get_value(index, 'LNVRNP'))
         
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
         nudf['Visitor'] = nudf['Visitor Symbol']
         nudf['Home'] = nudf['Home Symbol']
         nudf.drop(['Visitor Symbol', 'Home Symbol'], axis=1, inplace=True)
@@ -279,7 +205,7 @@ class NFLP:
         pnudf['WNP'] = pnudf['WNP'].astype(int)
         
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
         for index, row in nudf.iterrows():
         #    print(row.Year, row.Week, row.Visitor)
             gndf = gdf[(gdf.Year == row.Year) & (gdf.Week == row.Week) & (gdf.Visitor == row.Visitor)]
@@ -328,7 +254,7 @@ class NFLP:
             y = y + 1
             
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
         gdf['Playoffs'] = False
         for index, row in gdf.iterrows():
             if (row.Week > 9 and row.Year == 1982):
@@ -348,48 +274,57 @@ class NFLP:
         gdf['OT'] = gdf['OT'].astype(int)
         gdf['VWIN'] = gdf['VWIN'].astype(int)
         gdf['TIE'] = gdf['TIE'].astype(int)
-        gdf['Neutral'] = gdf['Neutral'].astype(int)
+        gdf['Neutral'] = gdf['Neutral'].astype(bool)
         gdf['Playoffs'] = gdf['Playoffs'].astype(int)
-        
+
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
-        gsdf = gdf[gdf['Year'] > 1977].copy()
-        for index, row in gsdf.iterrows():
-            gsdf.at[index, 'RegOddsDiff'] = abs(gsdf.at[index, 'VRNP'] + gsdf.at[index, 'VSpread'])
-            gsdf.at[index, 'OddsDiff'] = abs(gsdf.at[index, 'VNP'] + gsdf.at[index, 'VSpread'])
-            gsdf.at[index, 'VRegOddsDiff'] = gsdf.at[index, 'VRNP'] + gsdf.at[index, 'VSpread']
-            gsdf.at[index, 'VOddsDiff'] = gsdf.at[index, 'VNP'] + gsdf.at[index, 'VSpread']
-            gsdf.at[index, 'FRegOddsDiff'] = gsdf.at[index, 'VRNP'] + gsdf.at[index, 'VSpread']
-            gsdf.at[index, 'FOddsDiff'] = gsdf.at[index, 'VNP'] + gsdf.at[index, 'VSpread']
-            if (gsdf.at[index, 'VOddsDiff'] > 0):
-                gsdf.at[index, 'VBeatSpread'] = 1.0
-            elif (gsdf.at[index, 'VOddsDiff'] < 0):
-                gsdf.at[index, 'VBeatSpread'] = 0.0
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        for index, row in gdf.iterrows():
+            if row['OT']:
+                vnp = 0.0
             else:
-                gsdf.at[index, 'VBeatSpread'] = 0.5
-            if (gsdf.at[index, 'VSpread'] > 0):
-                if (gsdf.at[index, 'VOddsDiff'] < 0):
-                    gsdf.at[index, 'FBeatSpread'] = 1.0
-                elif (gsdf.at[index, 'VOddsDiff'] > 0):
-                    gsdf.at[index, 'FBeatSpread'] = 0.0
+                vnp = row['VNP']
+            if row['Neutral']:
+                gdf.at[index, 'VNPA'] = vnp
+            else:
+                gdf.at[index, 'VNPA'] = vnp + 2.7
+            if row.Year > 1977:
+                gdf.at[index, 'RegOddsDiff'] = abs(gdf.at[index, 'VRNP'] + gdf.at[index, 'VSpread'])
+                gdf.at[index, 'OddsDiff'] = abs(gdf.at[index, 'VNP'] + gdf.at[index, 'VSpread'])
+                gdf.at[index, 'VRegOddsDiff'] = gdf.at[index, 'VRNP'] + gdf.at[index, 'VSpread']
+                gdf.at[index, 'VOddsDiff'] = gdf.at[index, 'VNP'] + gdf.at[index, 'VSpread']
+                gdf.at[index, 'FRegOddsDiff'] = gdf.at[index, 'VRNP'] + gdf.at[index, 'VSpread']
+                gdf.at[index, 'FOddsDiff'] = gdf.at[index, 'VNP'] + gdf.at[index, 'VSpread']
+                if (gdf.at[index, 'VOddsDiff'] > 0):
+                    gdf.at[index, 'VBeatSpread'] = 1.0
+                elif (gdf.at[index, 'VOddsDiff'] < 0):
+                    gdf.at[index, 'VBeatSpread'] = 0.0
                 else:
-                    gsdf.at[index, 'FBeatSpread'] = 0.5
-                if (gsdf.at[index, 'VOddsDiff'] > 0):
-                    gsdf.at[index, 'FBeatSpread'] = 0.0
-                elif (gsdf.at[index, 'VOddsDiff'] < 0):
-                    gsdf.at[index, 'FBeatSpread'] = 1.0
-                else:
-                    gsdf.at[index, 'FBeatSpread'] = 0.5
+                    gdf.at[index, 'VBeatSpread'] = 0.5
+                if (gdf.at[index, 'VSpread'] > 0):
+                    if (gdf.at[index, 'VOddsDiff'] < 0):
+                        gdf.at[index, 'FBeatSpread'] = 1.0
+                    elif (gdf.at[index, 'VOddsDiff'] > 0):
+                        gdf.at[index, 'FBeatSpread'] = 0.0
+                    else:
+                        gdf.at[index, 'FBeatSpread'] = 0.5
+                    if (gdf.at[index, 'VOddsDiff'] > 0):
+                        gdf.at[index, 'FBeatSpread'] = 0.0
+                    elif (gdf.at[index, 'VOddsDiff'] < 0):
+                        gdf.at[index, 'FBeatSpread'] = 1.0
+                    else:
+                        gdf.at[index, 'FBeatSpread'] = 0.5
         
 #        gdf.to_csv('{}NFLGamesDBDrived.csv'.format(location))
         
-        rsdf = gdf[gdf['Playoffs'] == False].copy()
-        rssdf = gsdf[gsdf['Playoffs'] == False].copy()
+        gsdf = gdf[gdf.Year > 1977]
+        rsdf = gdf[gdf.Playoffs == False]
+        rssdf = gsdf[gsdf.Playoffs == False]
         
         self.gdf = gdf
         
         count = count + 1
-        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
         for symbol in team_list:
             self.td[symbol] = gdf[(gdf.Visitor == symbol) | (gdf.Home == symbol)].copy()
             self.td[symbol].reset_index(drop=True, inplace=True)
@@ -412,106 +347,5 @@ class NFLP:
     def get_teams_reg_spread(self):
         return self.rstds
     
-    def get_dataframe_overall(self):
+    def get_games_overall(self):
         return self.gdf
-        
-def split_Xy(X, col):
-    y = X[col]
-    X.drop([col], axis=1, inplace=True)
-    return y
-
-def logrec_score(X, y, runs, numvar):
-
-    train_score = []
-    test_score = []
-
-    i = 0
-    c = []
-    while (i < numvar):
-        ci = []
-        c.append(ci)
-        i = i + 1
-
-    j = 0
-    for j in range(runs):
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-        X_train.head()
-
-#mlp = MLPClassifier(solver='lbfgs', random_state=0, hidden_layer_sizes=[10])
-#mlp.fit(X_train, y_train)
-
-#train_score = mlp.score(X_train, y_train)
-#test_score = mlp.score(X_test, y_test)
-
-        logreg = LogisticRegression(C=1)
-        logreg.fit(X_train, y_train)
-        
-        train_score.append(logreg.score(X_train, y_train))
-        test_score.append(logreg.score(X_test, y_test))
-
-        i = 0
-        while (i < numvar):
-            c[i].append(logreg.coef_[0][i])
-            i = i + 1
-
-    i = 0
-    cols = []
-    cavg = []
-    while (i < numvar):
-        cols.append(i)
-        cavg.append(np.mean(c[i]))
-        i = i + 1
-    
-    xdf = pd.DataFrame(cavg, cols)
-
-    return xdf, np.mean(train_score), np.mean(test_score), ((np.mean(train_score)*3 + np.mean(test_score))/4), cavg
-
-def logrec_score2(X, y, numvar):
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-    
-    grid_values = {'penalty': ['l1', 'l2'], 'C': [.001, .01, .1, 1, 10, 100]}
-    logreg = LogisticRegression(random_state=0)
-    
-    grid_logreg = GridSearchCV(logreg, param_grid=grid_values, scoring='accuracy')
-    grid_logreg.fit(X_train, y_train)
-    y_dec_scores_acc = grid_logreg.decision_function(X_test)
-    
-    print(grid_logreg.best_params_)
-    print(grid_logreg.best_score_)
-    print(grid_logreg.cv_results_)
-    
-    logreg = LogisticRegression(penalty=grid_logreg.best_params_['penalty'],
-                                C=grid_logreg.best_params_['C'],
-                                random_state=0)
-
-    logreg.fit(X_train, y_train)
-    i = 0
-    cols = []
-#    cavg = []
-    while (i < numvar):
-        cols.append(i)
-#        cavg.append(np.mean(c[i]))
-        i = i + 1
-        
-    xdf = pd.DataFrame(logreg.coef_[0], cols)
-    trs = logreg.score(X_train, y_train)
-    tes = logreg.score(X_test, y_test)
-    ovs = (trs*3 + tes) / 4
-
-    return xdf, trs, tes, ovs, logreg.coef_[0]
-
-def ridgereg_score(X, y):
-
-    ridgecv = RidgeCV(alphas=(.001, .01, .1, 1.0, 5.0, 10.0, 20.0, 50.0, 75.0, 100.0, 1000.0), store_cv_values=True)
-    ridgecv.fit(X, y)
-    score = ridgecv.score(X, y)
-    
-    print("intercept =", ridgecv.intercept_)
-    print("coef =", ridgecv.coef_)
-    print("alpha =", ridgecv.alpha_)
-    print("r2 =", score)
-    
-
-    return ridgecv, score, ridgecv.coef_, ridgecv.intercept_
