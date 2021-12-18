@@ -285,9 +285,9 @@ class NFLP:
             else:
                 vnp = row['VNP']
             if row['Neutral']:
-                gdf.at[index, 'VNPA'] = vnp
+                gdf.at[index, 'VNPA'] = round(float(vnp), 0)
             else:
-                gdf.at[index, 'VNPA'] = vnp + 2.7
+                gdf.at[index, 'VNPA'] = round(vnp + 2.7, 1)
             if row.Year > 1977:
                 gdf.at[index, 'RegOddsDiff'] = abs(gdf.at[index, 'VRNP'] + gdf.at[index, 'VSpread'])
                 gdf.at[index, 'OddsDiff'] = abs(gdf.at[index, 'VNP'] + gdf.at[index, 'VSpread'])
