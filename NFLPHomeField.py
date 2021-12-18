@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 nfl = NFLP.NFLP()
-gdf = nfl.get_dataframe_overall()
+gdf = nfl.get_games_overall()
 
 nngdf = gdf[gdf.Neutral == False]
 
