@@ -54,8 +54,8 @@ class NFLP:
     planned_neutral_sites_fn = os.path.join(location, 'PlannedNeutralSites.xlsx')
 
     def __init__(self):
-        starttime = dt.datetime.now()
-#        print("start")
+        # starttime = dt.datetime.now()
+        # print("start")
         
         self.td = {}
         self.rstd = {}
@@ -64,16 +64,14 @@ class NFLP:
         
         gdf = pd.read_csv(NFLP.nfl_games_fn)
         tdf = pd.read_csv(NFLP.team_names_map_fn)
-#        xl = pd.ExcelFile(NFLP.team_names_map_fn)
-#        tdf = xl.parse()
         xl = pd.ExcelFile(NFLP.neutral_sites_fn)
         nudf = xl.parse()
         xl = pd.ExcelFile(NFLP.planned_neutral_sites_fn)
         pnudf = xl.parse()
 
-        count = 0
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = 0
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         gdf['VPF'] = gdf['Q1VS'] + gdf['Q2VS'] + gdf['Q3VS'] + gdf['Q4VS'] + gdf['OTVS']
         gdf['VRPF'] = gdf['VPF'] - gdf['OTVS']
         gdf['VPA'] = gdf['Q1HS'] + gdf['Q2HS'] + gdf['Q3HS'] + gdf['Q4HS'] + gdf['OTHS']
@@ -94,28 +92,19 @@ class NFLP:
             v = v[row['Year'] >= v['Start']]
             v = v[row['Year'] <= v['End']]
             v.reset_index(inplace=True, drop=True)
-        #    gdf.set_value(index, 'Visitor Symbol', v.get_value(0, 'Symbol'))
-        #    gdf.loc[index, 'Visitor Symbol'] = v.loc[0, 'Symbol']
             gdf.at[index, 'Visitor Symbol'] = v.at[0, 'Symbol']
             h = tdf[tdf['Name'] == row.Home].copy()
             h = h[row['Year'] >= h['Start']]
             h = h[row['Year'] <= h['End']]
             h.reset_index(inplace=True, drop=True)
-        #    gdf.set_value(index, 'Home Symbol', h.get_value(0, 'Symbol'))
-        #    gdf.loc[index, 'Home Symbol'] = h.loc[0, 'Symbol']
             gdf.at[index, 'Home Symbol'] = h.at[0, 'Symbol']
-        #    print(h.loc[0, 'Symbol'])
-        #    gdf.set_value(index, 'LNVRNP', math.log(abs(gdf.get_value(index, 'VRNP'))+1))
-        #    if (gdf.get_value(index, 'VRNP') < 0):
-        #        gdf.set_value(index, 'LNVRNP', -gdf.get_value(index, 'LNVRNP'))
         
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         gdf['Visitor'] = gdf['Visitor Symbol']
         gdf['Home'] = gdf['Home Symbol']
         gdf.drop(['Visitor Symbol', 'Home Symbol'], axis=1, inplace=True)
         gdf.sort_values(['Year', 'Week'], axis=0, inplace=True)
-        #gdf.sort_values(['Year', 'Week', 'Visitor'], axis=0, inplace=True)
         gdf.reset_index(drop=True, inplace=True)
         gdf['Neutral'] = False
         
@@ -143,20 +132,15 @@ class NFLP:
             v = v[row['Year'] >= v['Start']]
             v = v[row['Year'] <= v['End']]
             v.reset_index(inplace=True, drop=True)
-        #    nudf.set_value(index, 'Visitor Symbol', v.get_value(0, 'Symbol'))
             nudf.at[index, 'Visitor Symbol'] = v.at[0, 'Symbol']
             h = tdf[tdf['Name'] == row.Home].copy()
             h = h[row['Year'] >= h['Start']]
             h = h[row['Year'] <= h['End']]
             h.reset_index(inplace=True, drop=True)
-        #    nudf.set_value(index, 'Home Symbol', h.get_value(0, 'Symbol'))
             nudf.at[index, 'Home Symbol'] = h.at[0, 'Symbol']
-        #    gdf.set_value(index, 'LNVRNP', math.log(abs(gdf.get_value(index, 'VRNP'))+1))
-        #    if (gdf.get_value(index, 'VRNP') < 0):
-        #        gdf.set_value(index, 'LNVRNP', -gdf.get_value(index, 'LNVRNP'))
         
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         nudf['Visitor'] = nudf['Visitor Symbol']
         nudf['Home'] = nudf['Home Symbol']
         nudf.drop(['Visitor Symbol', 'Home Symbol'], axis=1, inplace=True)
@@ -166,13 +150,10 @@ class NFLP:
         pnudf.drop(pnudf.head(1).index, inplace=True)
         prev = 1926
         for index, row in pnudf.iterrows():
-        #    print(type(row.Season))
             if (pd.isnull(row.Season)):
                 pnudf.at[index, 'Season'] = prev
-        #        print("set season =", prev)
             else:
                 prev = row.Season
-        #        print("prev =", prev)
         pnudf = pnudf[pnudf.Type == 'REG']
         pnudf['Season'] = pnudf['Season'].astype(int)
         pnudf = pnudf[(pnudf.Season >= 1970) & (pnudf.Type == 'REG')]
@@ -184,13 +165,11 @@ class NFLP:
             w = w[row['Season'] >= w['Start']]
             w = w[row['Season'] <= w['End']]
             w.reset_index(inplace=True, drop=True)
-        #    pnudf.set_value(index, 'Win Symbol', v.get_value(0, 'Symbol'))
             pnudf.at[index, 'Win Symbol'] = w.at[0, 'Symbol']
             l = tdf[tdf['Name'] == row['Losing/Tied Team']].copy()
             l = l[row['Season'] >= l['Start']]
             l = l[row['Season'] <= l['End']]
             l.reset_index(inplace=True, drop=True)
-        #    pnudf.set_value(index, 'Lose Symbol', h.get_value(0, 'Symbol'))
             pnudf.at[index, 'Lose Symbol'] = l.at[0, 'Symbol']
             score = pnudf.at[index, 'Score']
             if (score[1] == "-"):
@@ -199,23 +178,16 @@ class NFLP:
             else:
                 wscore = score[:2]
                 lscore = score[3:5]
-        #    pnudf.set_value(index, 'WNP', int(int(wscore) - int(lscore)))
             pnudf.at[index, 'WNP'] = int(int(wscore) - int(lscore))
         
         pnudf['WNP'] = pnudf['WNP'].astype(int)
         
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         for index, row in nudf.iterrows():
-        #    print(row.Year, row.Week, row.Visitor)
             gndf = gdf[(gdf.Year == row.Year) & (gdf.Week == row.Week) & (gdf.Visitor == row.Visitor)]
             for gindex, grow in gndf.iterrows():
                 gdf.at[gindex, 'Neutral'] = True
-#            for gindex, grow in gdf.iterrows():
-#                if(grow.Year == row.Year and grow.Week == row.Week and grow.Visitor == row.Visitor):
-        #            print("Setting neutral to True")
-        #            gdf.set_value(gindex, 'Neutral', True)
-#                    gdf.at[gindex, 'Neutral'] = True
         
         for index, row in pnudf.iterrows():
             gpvdf = gdf[(gdf.Year == row.Season) & (gdf.Visitor == row['Win Symbol']) & (gdf.Home == row['Lose Symbol']) & (gdf.VNP == row.WNP)]
@@ -224,20 +196,7 @@ class NFLP:
             gphdf = gdf[(gdf.Year == row.Season) & (gdf.Visitor == row['Lose Symbol']) & (gdf.Home == row['Win Symbol']) & (gdf.VNP == -row.WNP)]
             for gindex, grow in gphdf.iterrows():
                 gdf.at[gindex, 'Neutral'] = True
-            """
-            for gindex, grow in gdf.iterrows():
-                if(grow.Year == row.Season and
-                   (((grow.Visitor == row['Win Symbol']) and
-                     (grow.Home == row['Lose Symbol']) and
-                     (grow.VNP == row.WNP)) or
-                   (((grow.Home == row['Win Symbol']) and
-                     (grow.Visitor == row['Lose Symbol']) and
-                     (grow.VNP == -row.WNP))))):
-        #            print("Setting neutral to True Year", grow.Year, grow.Visitor, grow.Home, grow.VNP)
-        #            gdf.set_value(gindex, 'Neutral', True)
-                    gdf.at[gindex, 'Neutral'] = True
-            """
-        
+       
         y = 1970
         while y <= 2017:
             ygdf = gdf[gdf.Year == y]
@@ -245,16 +204,10 @@ class NFLP:
             gmdf = ygdf[ygdf.Week == week_max]
             for index, row in gmdf.iterrows():
                 gdf.at[index, 'Neutral'] = True
-            """
-            for index, row in gdf.iterrows():
-                if (row.Year == y and row.Week == week_max):
-        #            gdf.set_value(index, 'Neutral', True)
-                    gdf.at[index, 'Neutral'] = True
-            """
             y = y + 1
             
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         gdf['Playoffs'] = False
         for index, row in gdf.iterrows():
             if (row.Week > 9 and row.Year == 1982):
@@ -277,8 +230,8 @@ class NFLP:
         gdf['Neutral'] = gdf['Neutral'].astype(bool)
         gdf['Playoffs'] = gdf['Playoffs'].astype(int)
 
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         for index, row in gdf.iterrows():
             if row['OT']:
                 vnp = 0.0
@@ -315,16 +268,14 @@ class NFLP:
                     else:
                         gdf.at[index, 'FBeatSpread'] = 0.5
         
-#        gdf.to_csv('{}NFLGamesDBDrived.csv'.format(location))
-        
         gsdf = gdf[gdf.Year > 1977]
         rsdf = gdf[gdf.Playoffs == False]
         rssdf = gsdf[gsdf.Playoffs == False]
         
         self.gdf = gdf
         
-        count = count + 1
-#        print("ms{} {}".format(count, dt.datetime.now() - starttime))
+        # count = count + 1
+        # print("ms{} {}".format(count, dt.datetime.now() - starttime))
         for symbol in team_list:
             self.td[symbol] = gdf[(gdf.Visitor == symbol) | (gdf.Home == symbol)].copy()
             self.td[symbol].reset_index(drop=True, inplace=True)
